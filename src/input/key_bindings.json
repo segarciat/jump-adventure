@@ -1,0 +1,6 @@
+{
+    "right": {"keycodes": ["d"], "state_type": 2},
+    "left": {"keycodes": ["a"], "state_type": 2},
+    "duck": {"keycodes": ["s"], "state_type": 2},
+    "jump": {"keycodes": ["x"], "state_type": 1}
+}
