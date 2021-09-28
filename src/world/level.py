@@ -2,14 +2,15 @@ import os
 import pytmx
 import pygame as pg
 
-
 import src.config as cfg
 import src.world.physics as physics
 from src.world.camera import Camera
 from src.sprites.player import Player
 from src.sprites.platform import Platform
-from src.sprites.coin import Coin
-from src.sprites.springboard import SpringBoard
+from src.sprites.items.coin import Coin
+from src.sprites.items.springboard import SpringBoard
+from src.sprites.items.spikes import Spikes
+from src.sprites.items.weight import ChainedWeight
 
 
 class Level:
@@ -52,34 +53,27 @@ class Level:
             'steps': pg.sprite.Group(),
             'items': pg.sprite.Group(),
         }
-        game_objects = {}
-        # Expect a single player, and multiple of other entities.
-        for t_obj in tm.objects:
-            if t_obj.name == "player":
-                game_objects[t_obj.name] = t_obj
-            else:
-                game_objects.setdefault(t_obj.name, []).append(t_obj)
-
-        # Create the player and world camera.
-        p = game_objects.get('player')
+        p = tm.get_object_by_name("player")
         self._player = Player(p.x, p.y, Player.P1, self._groups)
         self._camera = Camera(self._map_rect.width, self._map_rect.height, self._player)
-
-        # Create all other spites.
-        for p in game_objects.get("platform"):
-            self._groups['platforms'].add(Platform(p.x, p.y, p.width, p.height, self._groups))
-        for p in game_objects.get("step"):
-            self._groups['steps'].add(Platform(p.x, p.y, p.width, p.height, self._groups))
-        for p in game_objects.get("coin"):
-            if p.coin_type == 'bronze':
-                self._groups['items'].add(Coin.bronze(p.x, p.y, self._groups))
-            elif p.coin_type == 'silver':
-                self._groups['items'].add(Coin.silver(p.x, p.y, self._groups))
-            elif p.coin_type == 'gold':
-                self._groups['items'].add(Coin.gold(p.x, p.y, self._groups))
-
-        for p in game_objects.get('springboard'):
-            self._groups['items'].add(SpringBoard(p.x, p.y, self._groups))
+        for p in tm.objects:
+            if p.name == "platform":
+                self._groups['platforms'].add(Platform(p.x, p.y, p.width, p.height, self._groups))
+            elif p.name == "step":
+                self._groups['steps'].add(Platform(p.x, p.y, p.width, p.height, self._groups))
+            elif p.name == "coin":
+                if p.coin_type == 'bronze':
+                    self._groups['items'].add(Coin.bronze(p.x, p.y, self._groups))
+                elif p.coin_type == 'silver':
+                    self._groups['items'].add(Coin.silver(p.x, p.y, self._groups))
+                elif p.coin_type == 'gold':
+                    self._groups['items'].add(Coin.gold(p.x, p.y, self._groups))
+            elif p.name == "spikes":
+                self._groups['items'].add(Spikes(p.x, p.y, self._groups))
+            elif p.name == "springboard":
+                self._groups['items'].add(SpringBoard(p.x, p.y, self._groups))
+            elif p.name == "weight":
+                self._groups['items'].add(ChainedWeight(p.x, p.y, self._player, self._groups))
 
     def process_inputs(self) -> None:
         """Handles keys and clicks that affect the game world."""
@@ -102,9 +96,8 @@ class Level:
         # Resolve collisions.
         items = pg.sprite.spritecollide(self._player, self._groups['items'], dokill=False,
                                         collided=physics.collide_hit_rect)
-
         for item in items:
-            item.activate(self._player)
+            item.collide(self._player)
 
     def draw(self, screen: pg.Surface) -> None:
         """Draws every sprite in the game world, as well as heads-up display elements.
@@ -116,7 +109,8 @@ class Level:
         screen.blit(self._map_surface, self._camera.apply(self._map_rect))
         # Draw all sprites.
         for sprite in self._groups['all']:
-            screen.blit(sprite.image, self._camera.apply(sprite.rect))
-            if cfg.DEBUG:
+            sprite.draw(screen, self._camera)
+        if cfg.DEBUG:
+            for sprite in self._groups['all']:
                 pg.draw.rect(screen, (255, 255, 255), self._camera.apply(sprite.hit_rect), 1)
         self._player.hud.draw(screen)

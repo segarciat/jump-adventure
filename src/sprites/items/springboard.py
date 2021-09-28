@@ -1,8 +1,9 @@
-from src.utils.timer import Timer
+from src.sprites.items.base_item import BaseItem
 from src.sprites.animated_sprite import AnimatedSprite
+from src.utils.timer import Timer
 
 
-class SpringBoard(AnimatedSprite):
+class SpringBoard(AnimatedSprite, BaseItem):
     JUMP_VEL = 2000
     SPRING_DOWN = 0
     SPRING_UP = 1
@@ -21,21 +22,21 @@ class SpringBoard(AnimatedSprite):
         self.hit_rect.y = self.rect.y
         self.hit_rect.topleft = x, y + 20
         self._player = None
-        self.activation_timer = Timer()
-        self.activation_timer.pause()
+        self._activation_timer = Timer()
+        self._activation_timer.pause()
 
     def update(self, dt: float):
         """Springs the board back up after a short delay."""
-        if self.activation_timer.elapsed() >= SpringBoard.DELAY:
+        if self._activation_timer.elapsed() >= SpringBoard.DELAY:
             self.change_anim(SpringBoard.SPRING_UP)
             self.hit_rect.y -= SpringBoard.SPRING_COMPRESS
-            self.activation_timer.restart()
-            self.activation_timer.pause()
+            self._activation_timer.restart()
+            self._activation_timer.pause()
 
-    def activate(self, player):
+    def collide(self, player):
         """Sets the player's y velocity to effect a powerful jump by the player."""
         if player.vel.y > 0:
             player.vel.y = -SpringBoard.JUMP_VEL
             self.change_anim(SpringBoard.SPRING_DOWN)
             self.hit_rect.y += SpringBoard.SPRING_COMPRESS
-            self.activation_timer.unpause()
+            self._activation_timer.unpause()

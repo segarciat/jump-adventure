@@ -3,7 +3,8 @@ import pygame as pg
 import src.world.physics as physics
 from src.sprites.animated_sprite import AnimatedSprite
 from src.sprites.attributes.movable import MoveMixin
-from src.sprites.player_state import PlayerState, PlayerDuckState, PlayerJumpState, PlayerStandState, PlayerWalkState
+from src.sprites.player_state import PlayerState, PlayerDuckState, PlayerJumpState, PlayerStandState, PlayerWalkState, \
+    PlayerHurtState
 from src.sprites.player_hud import PlayerHud
 
 
@@ -27,6 +28,8 @@ class Player(AnimatedSprite, MoveMixin):
     HURT_L = 9
     JUMP_L = 10
     WALK_L = 11
+
+    MAX_HEARTS = 3
 
     def __init__(self, x: float, y: float, player_number: int, all_groups):
         frames = [
@@ -61,6 +64,9 @@ class Player(AnimatedSprite, MoveMixin):
         self.player_number = player_number
         self.hud = PlayerHud(self)
         self.coins = 0
+        self.lives = 1
+        self.max_hearts = Player.MAX_HEARTS
+        self.hearts = 3
 
         self.hit_rect.width = int(self.rect.width * 0.7)
         self.facing_left = False
@@ -68,6 +74,7 @@ class Player(AnimatedSprite, MoveMixin):
         self._duck_state = PlayerDuckState(self)
         self._walk_state = PlayerWalkState(self)
         self._jump_state = PlayerJumpState(self)
+        self._hurt_state = PlayerHurtState(self)
         self._state = self._stand_state
         self._state.enter()
 
@@ -99,6 +106,10 @@ class Player(AnimatedSprite, MoveMixin):
     def jump_state(self) -> PlayerState:
         return self._jump_state
 
+    @property
+    def hurt_state(self) -> PlayerState:
+        return self._hurt_state
+
     def handle_keys(self):
         """Handles keys by delegating to the state driving this object's behavior."""
         self._state.handle_keys()
@@ -110,6 +121,17 @@ class Player(AnimatedSprite, MoveMixin):
         # self.rect = self.image.get_rect()
         self.rect.midbottom = old_pos
         self.hit_rect.midbottom = old_pos
+
+    def hurt(self, half_heart_damage):
+        if half_heart_damage <= 0 or type(half_heart_damage) != int:
+            raise ValueError(f'Invalid number of half hearts damage value: {half_heart_damage}')
+        # Number of half hearts worth of damage.
+        self.hearts -= half_heart_damage * 0.5
+        if self.hearts <= 0:
+            self.lives -= 1
+            self.hearts = self.max_hearts
+            # Todo: handle case where the player runs out of lives.
+        self.state = self._hurt_state
 
     def update(self, dt: float) -> None:
         physics.apply_gravity(self, dt)

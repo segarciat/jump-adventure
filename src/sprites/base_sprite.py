@@ -18,6 +18,7 @@ class BaseSprite(pg.sprite.Sprite, metaclass=abc.ABCMeta):
         pg.sprite.Sprite.__init__(self, *groups)
         self.image = image_loader.get_image(image)
         self.image.set_colorkey(cfg.BLACK)
+        # Todo: decide if every sprite should have a reference to all groups.
         self.all_groups = all_groups
         self.rect = self.image.get_rect()
         self.hit_rect = self.rect.copy()  # Untransformed rectangle for collision-handling.
@@ -29,3 +30,6 @@ class BaseSprite(pg.sprite.Sprite, metaclass=abc.ABCMeta):
     @staticmethod
     def get_sound_player():
         return sound_player
+
+    def draw(self, screen, camera):
+        screen.blit(self.image, camera.apply(self.rect))

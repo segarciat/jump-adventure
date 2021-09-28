@@ -2,6 +2,7 @@ import abc
 
 import src.input.input_manager as input_manager
 import src.world.physics as physics
+from src.utils.timer import Timer
 
 
 class PlayerState:
@@ -121,7 +122,7 @@ class PlayerWalkState(PlayerState):
 
 
 class PlayerJumpState(PlayerState):
-    JUMP = 1000
+    JUMP = 1200
     TURN_SPEED = PlayerWalkState.SPEED * 0.5
 
     def __init__(self, player):
@@ -149,4 +150,26 @@ class PlayerJumpState(PlayerState):
     def update(self, dt: float):
         """If player reaches floor, go to standing state"""
         if physics.on_ground(self._player):
+            self._player.state = self._player.stand_state
+
+
+class PlayerHurtState(PlayerState):
+    HURT_DURATION = 250
+
+    def __init__(self, player):
+        PlayerState.__init__(self, player)
+        self._hurt_timer = Timer()
+
+    def enter(self) -> None:
+        if self._player.facing_left:
+            self._player.change_anim(self._player.HURT_L)
+        else:
+            self._player.change_anim(self._player.HURT_R)
+        self._hurt_timer.restart()
+
+    def handle_keys(self) -> None:
+        pass
+
+    def update(self, dt: float) -> None:
+        if self._hurt_timer.elapsed() > PlayerHurtState.HURT_DURATION:
             self._player.state = self._player.stand_state

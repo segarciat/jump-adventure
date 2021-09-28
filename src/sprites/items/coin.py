@@ -1,7 +1,8 @@
+from src.sprites.items.base_item import BaseItem
 from src.sprites.base_sprite import BaseSprite
 
 
-class Coin(BaseSprite):
+class Coin(BaseSprite, BaseItem):
     BRONZE_VALUE = 1
     SILVER_VALUE = 2
     GOLD_VALUE = 3
@@ -15,7 +16,7 @@ class Coin(BaseSprite):
         self.hit_rect.height /= 2
         self.hit_rect.center = self.rect.center
 
-    def activate(self, player):
+    def collide(self, player):
         BaseSprite.get_sound_player().play_sfx(Coin.SFX)
         player.coins += self._value
         self.kill()

@@ -10,3 +10,6 @@ class Platform(pg.sprite.Sprite):
         self.hit_rect = self.rect
         self.rect.x = x
         self.rect.y = y
+
+    def draw(self, screen, camera):
+        screen.blit(self.image, camera.apply(self.rect))
