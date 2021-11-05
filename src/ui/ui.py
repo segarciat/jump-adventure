@@ -5,12 +5,11 @@ from src.ui.menu import Menu
 
 class UI:
     def __init__(self):
-        self._ui_sprites = pg.sprite.Group()
         self._menus = []
 
     def make_menu(self, title, size, color, buttons):
         """Creates a menu and presents it as the UI's topmost element."""
-        self._menus.append(Menu(title, size, color, buttons, self._ui_sprites))
+        self._menus.append(Menu(title, size, color, buttons))
 
     def process_inputs(self):
         """Handles the mouse by delegating to the topmost menu."""
@@ -19,13 +18,12 @@ class UI:
 
     def pop_menu(self):
         """Removes the topmost menu."""
-        menu = self._menus.pop()
-        menu.kill()
+        self._menus.pop()
 
     def clear(self):
         """Clears all menus from the UI."""
         while self._menus:
-            self.pop_menu()
+            self._menus.pop()
 
     def draw(self, surface: pg.Surface):
         """Draw all menus from bottom to top."""

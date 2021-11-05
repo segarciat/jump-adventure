@@ -28,10 +28,10 @@ class Camera:
 
     def update(self) -> None:
         """Clamps the camera position using the target's position so that the target is always visible."""
-        self.rect.center = self.target.pos
+        self.rect.center = self.target.rect.center
 
-        self.rect.centerx = clamp(self.target.pos.x, cfg.SCREEN_WIDTH / 2, self.map_width - cfg.SCREEN_WIDTH / 2)
-        self.rect.centery = clamp(self.target.pos.y, cfg.SCREEN_HEIGHT / 2, self.map_height - cfg.SCREEN_HEIGHT / 2)
+        self.rect.centerx = clamp(self.target.rect.centerx, cfg.SCREEN_WIDTH / 2, self.map_width - cfg.SCREEN_WIDTH / 2)
+        self.rect.centery = clamp(self.target.rect.centery, cfg.SCREEN_HEIGHT / 2, self.map_height - cfg.SCREEN_HEIGHT / 2)
 
     def apply(self, rect: pg.Rect) -> pg.Rect:
         """Returns a rectangle offset by the camera's position.

@@ -16,7 +16,7 @@ class _ImageLoader:
                               to a sheet's image and corresponding XML file.
         """
         self._sprite_sheets = []
-        self._extra_images = {}
+        self._cached_images = {}
         print("Loading images...")
         for sheet in sprite_sheets:
             try:
@@ -42,18 +42,31 @@ class _ImageLoader:
                         surf = surf.convert()
                     else:
                         surf = surf.convert_alpha()
-                    self._extra_images[filename] = surf
+                    self._cached_images[filename] = surf
 
-    def get_image(self, name: str) -> pg.Surface:
+    def get_image(self, image_name: str, shared: bool = False) -> pg.Surface:
         """ Returns a surface corresponding with the given name
 
-        :param name: Name of image as listed in the sprite sheet.
+        :param image_name: Name of image as listed in the sprite sheet.
+        :param shared: Caches image if not already done so, then returns a reference to the cached image.
         :return: Pygame surface corresponding to the image name 'name'
         """
-        for sprite_sheet in self._sprite_sheets:
-            if name in sprite_sheet['rectangles']:
-                return _ImageLoader._create_surface(sprite_sheet['surf'], sprite_sheet['rectangles'][name])
-        return self._extra_images[name].copy()
+        # todo: consider renaming shared to 'new', as in: 'new=True'
+        if image_name not in self._cached_images:
+            # Render the image if not already cached.
+            for sprite_sheet in self._sprite_sheets:
+                if image_name in sprite_sheet['rectangles']:
+                    image = _ImageLoader._create_surface(sprite_sheet['surf'], sprite_sheet['rectangles'][image_name])
+                    # Cache if necessary before returning.
+                    if shared:
+                        self._cached_images[image_name] = image
+                    return image
+            # If image not found, then it just does not exist.
+            raise RuntimeError(f'Unable to render image: "{image_name}"')
+        elif shared:
+            return self._cached_images.get(image_name)
+        # Defaults to copy cached images.
+        return self._cached_images.get(image_name).copy()
 
     @classmethod
     def _create_surface(cls, sheet_surf: pg.Surface, rect: tuple) -> pg.Surface:
@@ -66,6 +79,7 @@ class _ImageLoader:
         x, y, w, h = rect
         image = pg.Surface((w, h))
         image.blit(sheet_surf, (0, 0), pg.Rect(x, y, w, h))
+        image.set_colorkey(cfg.BLACK)
         return image
 
 

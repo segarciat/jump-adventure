@@ -8,6 +8,7 @@ SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 840
 TITLE = "Jump Adventure"
 FPS = 60
+MS_PER_UPDATE = 1.0 / FPS
 MAP_FILE = 'test.tmx'
 
 # Game directory and game assets directories.
@@ -26,7 +27,6 @@ YELLOW = (255, 255, 0)
 TRANSPARENT = (255, 255, 255, 0)
 COLOR_KEY = BLACK
 
-
 # Sprite sheets.
 SPRITE_SHEETS = (
     # {"img": "onlyObjects_default.png", "xml": "onlyObjects_default.xml"},  # Game Object images.
@@ -36,7 +36,15 @@ SPRITE_SHEETS = (
 # Game font names.
 FONT_NAMES = ('arial', 'calibri')
 
-
 # Sprite Layers (smallest is topmost).
 EFFECTS_LAYER = 5
 ITEM_LAYER = 3
+
+
+# Group names
+DRAW_GROUP = "drawable"
+UPDATE_GROUP = "updatable"
+ITEMS_GROUP = "items"
+OBSTACLE_GROUP = "obstacles"
+PLATFORM_GROUP = "platforms"
+STEPS_GROUP = "steps"

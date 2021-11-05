@@ -2,18 +2,18 @@ import pygame as pg
 
 import src.config as cfg
 import src.services.text as text_renderer
-from src.sprites.base_sprite import BaseSprite
+import src.services.image_loader as image_loader
 from src.ui.button import Button
 
 
-class Menu(BaseSprite):
+class Menu:
     """General menu class with buttons to handle each action."""
     _BUTTON_PADDING = 15
     IMAGE = "blue_panel.png"
 
-    def __init__(self, title, size, color, buttons, ui_group):
-        BaseSprite.__init__(self, Menu.IMAGE, ui_group)
-        self.buttons = [Button(b['action'], b['text'], b['size'], b['color'], ui_group) for b in buttons]
+    def __init__(self, title, size, color, buttons):
+        self.image = image_loader.get_image(Menu.IMAGE)
+        self.buttons = [Button(b['action'], b['text'], b['size'], b['color']) for b in buttons]
         self._make(title, size, color)
 
     def update(self, dt: float) -> None:
@@ -55,6 +55,5 @@ class Menu(BaseSprite):
 
     def kill(self) -> None:
         """Stop drawing all of the buttons and the menu itself."""
-        for button in self.buttons:
-            button.kill()
-        super().kill()
+        while self.buttons:
+            self.buttons.pop()

@@ -1,27 +1,18 @@
-import sys
 import abc
 import pygame as pg
 
 import src.config as cfg
 import src.input.input_manager as input_manager
-from src.world.level import Level
+from src.world.world import World
 from src.utils.timer import Timer
+from src.state import IState
 
 
-class GameState(metaclass=abc.ABCMeta):
-    """Abstract the state of the Game class."""
+class GameState(IState, metaclass=abc.ABCMeta):
+    """Abstract class representing the state of the Game class."""
     def __init__(self, game):
         """Creates a GameState object to dive the behavior of the main object of class Game."""
         self._game = game
-
-    @abc.abstractmethod
-    def enter(self) -> None:
-        """Performs any initial work to transition into this state."""
-        pass
-
-    def exit(self) -> None:
-        """Performs any necessary clean-up before having the game transition to a new state."""
-        pass
 
     @abc.abstractmethod
     def process_inputs(self) -> None:
@@ -29,7 +20,7 @@ class GameState(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def update(self, dt: float) -> None:
+    def update(self, *args, **kwargs) -> None:
         """Updates the Game while in the current state."""
         pass
 
@@ -37,8 +28,9 @@ class GameState(metaclass=abc.ABCMeta):
     def draw(self, screen: pg.Surface) -> None:
         pass
 
-    def _transition(self, state: 'GameState'):
+    def _transition(self, state: 'GameState') -> None:
         """Sets the state attribute of the object of class Game; created for use in lambda expressions."""
+        # TODO: find alternative to using this helper function.
         self._game.state = state
 
 
@@ -54,7 +46,7 @@ class GameMainMenuState(GameState):
         self._game.ui.clear()
         buttons = [
             {'action': lambda: self._transition(self._game.play_state), 'text': 'Play', 'size': 16, 'color': cfg.WHITE},
-            {'action': sys.exit, 'text': 'Exit', 'size': 16, 'color': cfg.WHITE},
+            {'action': self._game.quit, 'text': 'Exit', 'size': 16, 'color': cfg.WHITE},
         ]
         self._game.ui.make_menu("Main Menu", 24, cfg.WHITE, buttons)
 
@@ -62,11 +54,11 @@ class GameMainMenuState(GameState):
         """Allows the user to quit out of the game or click on menu options."""
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                sys.exit()
+                self._game.quit()
         input_manager.update_inputs()
         self._game.ui.process_inputs()
 
-    def update(self, dt: float) -> None:
+    def update(self, *args, **kwargs) -> None:
         """Does nothing."""
         pass
 
@@ -80,7 +72,7 @@ class GamePlayingState(GameState):
     """Controls the main in-game (gameplay) behavior of the Game class."""
     def __init__(self, game):
         GameState.__init__(self, game)
-        self._level = None
+        self._world = None
         self._paused = False
 
     def enter(self) -> None:
@@ -88,14 +80,14 @@ class GamePlayingState(GameState):
         # Clear the UI.
         self._game.ui.clear()
         Timer.clear_timers()
-        self._level = Level(cfg.MAP_FILE)
+        self._world = World(cfg.MAP_FILE)
         self._paused = False
 
     def process_inputs(self) -> None:
         """Processes any key and clicks since the last frame."""
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                sys.exit()
+                self._game.quit()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_p:
                     self._pause()
@@ -107,18 +99,18 @@ class GamePlayingState(GameState):
         input_manager.update_inputs()
         self._game.ui.process_inputs()
         if not self._paused:
-            self._level.process_inputs()
+            self._world.player.process_inputs()
 
-    def update(self, dt: float) -> None:
+    def update(self, *args, **kwargs) -> None:
         """Updates the state of the game world to account for the elapsed time dt and determines if game is over."""
         if not self._paused:
-            self._level.update(dt)
+            self._world.update()
 
     def draw(self, screen: pg.Surface) -> None:
         """Draws the game's world and UI onto the screen surface."""
         if not self._paused:
             screen.fill(cfg.WHITE)
-            self._level.draw(screen)
+            self._world.draw(screen)
         self._game.ui.draw(screen)
 
     def _pause(self) -> None:
