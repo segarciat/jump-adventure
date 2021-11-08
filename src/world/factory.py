@@ -3,6 +3,9 @@ import src.config as cfg
 from src.world.sprites.alien import Alien
 from src.world.sprites.platform import Platform
 
+from src.world.sprites.mobs.slime import Slime
+from src.world.sprites.mobs.fish import Fish
+
 # Item sprites.
 from src.world.sprites.items.coin import Coin
 from src.world.sprites.items.springboard import SpringBoard
@@ -27,6 +30,10 @@ class Factory:
             return Factory.create_springboard(p, groups)
         elif p.name == "weight":
             return Factory.create_weight(p, player, groups)
+        elif p.name == "fish":
+            pass
+        elif p.name == "slime":
+            return Factory.create_slime(p, groups)
 
     @classmethod
     def create_alien(cls, p, groups):
@@ -55,3 +62,15 @@ class Factory:
     @classmethod
     def create_weight(cls, p, player, groups):
         return ChainedWeight(p.x, p.y, player, groups)
+
+    @classmethod
+    def create_slime(cls, p, groups):
+        x = p.x + p.width / 2
+        y = p.y + p.height
+        return Slime(x, y, groups)
+
+    @classmethod
+    def create_fish(cls, p, groups):
+        x = p.x + p.width / 2
+        y = p.y + p.height
+        return Fish(x, y, groups)

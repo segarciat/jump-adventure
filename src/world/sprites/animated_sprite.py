@@ -68,6 +68,8 @@ class AnimatedSprite(DrawableSprite):
                 self._handle_last_frame()
             # Update the active image
             self.image = self._images[self._anim_num][self._current_frame]
+            self.rect.width = self.image.get_width()
+            self.rect.height = self.image.get_height()
             self._frame_time = self._frame_time % (1 / self._anim_fps)
 
     # Subclasses might override to decide what to do at end of animation, like kill the sprite.
