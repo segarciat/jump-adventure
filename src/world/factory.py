@@ -1,16 +1,16 @@
 import src.config as cfg
 
-from src.world.sprites.alien import Alien
-from src.world.sprites.platform import Platform
+from src.world.alien import Alien
+from src.world.platform import Platform
 
-from src.world.sprites.mobs.slime import Slime
-from src.world.sprites.mobs.fish import Fish
+from src.world.mobs.slime import Slime
+from src.world.mobs.fish import Fish
 
 # Item sprites.
-from src.world.sprites.items.coin import Coin
-from src.world.sprites.items.springboard import SpringBoard
-from src.world.sprites.items.spikes import Spikes
-from src.world.sprites.items.weight import ChainedWeight
+from src.world.items.coin import Coin
+from src.world.items.springboard import SpringBoard
+from src.world.items.spikes import Spikes
+from src.world.items.weight import ChainedWeight
 
 
 class Factory:

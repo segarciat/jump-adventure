@@ -2,9 +2,9 @@ import pygame as pg
 import random
 
 import src.world.physics as physics
-from src.world.sprites.animated_sprite import AnimatedSprite
-from src.world.sprites.base_sprite import IUpdatable
-from src.world.sprites.components.physics import PhysicsComponent
+from src.world.animated_sprite import AnimatedSprite
+from src.world.base_sprite import IUpdatable
+from src.world.components.physics import PhysicsComponent
 
 
 class Slime(AnimatedSprite, IUpdatable):

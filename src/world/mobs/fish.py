@@ -1,4 +1,4 @@
-from src.world.sprites.animated_sprite import AnimatedSprite
+from src.world.animated_sprite import AnimatedSprite
 
 
 class Fish(AnimatedSprite):

@@ -1,5 +1,5 @@
-from src.world.sprites.items.item import Item
-from src.world.sprites.base_sprite import DrawableSprite
+from src.world.items.item import Item
+from src.world.base_sprite import DrawableSprite
 
 
 class Spikes(DrawableSprite, Item):

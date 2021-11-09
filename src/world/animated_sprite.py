@@ -4,7 +4,7 @@ import pygame as pg
 
 import src.config as cfg
 import src.services.image_loader as image_loader
-from src.world.sprites.base_sprite import DrawableSprite
+from src.world.base_sprite import DrawableSprite
 
 
 class AnimatedSprite(DrawableSprite):

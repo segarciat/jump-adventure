@@ -1,7 +1,7 @@
 import src.world.physics as physics
-from src.world.sprites.items.item import Item
-from src.world.sprites.base_sprite import DrawableSprite, IUpdatable
-from src.world.sprites.components.physics import PhysicsComponent
+from src.world.items.item import Item
+from src.world.base_sprite import DrawableSprite, IUpdatable
+from src.world.components.physics import PhysicsComponent
 
 
 class ChainedWeight(DrawableSprite, IUpdatable, Item):

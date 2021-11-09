@@ -2,10 +2,10 @@ import pygame as pg
 
 import src.world.physics as physics
 from src.state import StatefulMixin
-from src.world.sprites.base_sprite import IUpdatable
-from src.world.sprites.animated_sprite import AnimatedSprite
-from src.world.sprites.components.physics import PhysicsComponent
-from src.world.sprites.alien_state import AlienState, AlienDuckState, AlienJumpState, AlienStandState, AlienWalkState, \
+from src.world.base_sprite import IUpdatable
+from src.world.animated_sprite import AnimatedSprite
+from src.world.components.physics import PhysicsComponent
+from src.world.alien_state import AlienState, AlienDuckState, AlienJumpState, AlienStandState, AlienWalkState, \
     AlienHurtState
 
 

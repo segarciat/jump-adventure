@@ -1,5 +1,5 @@
-from src.world.sprites.items.item import Item
-from src.world.sprites.base_sprite import DrawableSprite
+from src.world.items.item import Item
+from src.world.base_sprite import DrawableSprite
 
 
 class Coin(DrawableSprite, Item):
@@ -36,4 +36,4 @@ class Coin(DrawableSprite, Item):
         raise ValueError(f"Invalid coin type: '{coin_type}'")
 
 
-DrawableSprite.get_sound_player().get_sfx(Coin.SFX).set_volume(0.0)
+DrawableSprite.get_sound_player().get_sfx(Coin.SFX).set_volume(0.1)
