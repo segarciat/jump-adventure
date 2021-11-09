@@ -7,37 +7,41 @@ class Player:
     def __init__(self, sprite):
         self.lives = 1
         self.coins = 0
-        self.sprite = sprite
+        self._sprite = sprite
         self._hud = PlayerHUD(self)
 
     @property
-    def hud(self):
-        return self._hud
+    def sprite(self):
+        return self._sprite
+
+    def draw(self, screen, camera):
+        self._sprite.draw(screen, camera)
+        self._hud.draw(screen)
 
     def process_inputs(self):
-        if self.sprite.state == self.sprite.stand_state:
+        if self._sprite.state == self._sprite.stand_state:
             # if just pressed right or just pressed left... walk,
             if input_manager.process_active_binding("right"):
-                self.sprite.facing_left = False
-                self.sprite.state = self.sprite.walk_state
+                self._sprite.facing_left = False
+                self._sprite.state = self._sprite.walk_state
             elif input_manager.process_active_binding("left"):
-                self.sprite.facing_left = True
-                self.sprite.state = self.sprite.walk_state
+                self._sprite.facing_left = True
+                self._sprite.state = self._sprite.walk_state
             elif input_manager.process_active_binding("duck"):
-                self.sprite.state = self.sprite.duck_state
+                self._sprite.state = self._sprite.duck_state
             elif input_manager.process_active_binding("jump"):
-                self.sprite.state = self.sprite.jump_state
-        elif self.sprite.state == self.sprite.duck_state:
+                self._sprite.state = self._sprite.jump_state
+        elif self._sprite.state == self._sprite.duck_state:
             # if just released down (or... if not "still pressed"), stand
             if not input_manager.process_active_binding("duck"):
-                self.sprite.state = self.sprite.stand_state
-        elif self.sprite.state == self.sprite.walk_state:
-            if not self.sprite.facing_left and not input_manager.process_active_binding("right") or \
-                    self.sprite.facing_left and not input_manager.process_active_binding("left"):
-                self.sprite.state = self.sprite.stand_state
+                self._sprite.state = self._sprite.stand_state
+        elif self._sprite.state == self._sprite.walk_state:
+            if not self._sprite.facing_left and not input_manager.process_active_binding("right") or \
+                    self._sprite.facing_left and not input_manager.process_active_binding("left"):
+                self._sprite.state = self._sprite.stand_state
             elif input_manager.process_active_binding("jump"):
-                self.sprite.state = self.sprite.jump_state
-        elif self.sprite.state == self.sprite.jump_state:
+                self._sprite.state = self._sprite.jump_state
+        elif self._sprite.state == self._sprite.jump_state:
             pass
 
 

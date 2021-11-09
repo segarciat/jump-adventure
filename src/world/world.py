@@ -84,6 +84,7 @@ class World:
         # Draw all sprites.
         for sprite in self._groups[cfg.DRAW_GROUP]:
             sprite.draw(screen, self._camera)
+        # Draw white rectangle around the hit rectangle of each sprite.
         if cfg.DEBUG:
             for sprite in self._groups[cfg.DRAW_GROUP]:
                 pg.draw.rect(screen, (255, 255, 255), self._camera.apply(sprite.hit_rect), 1)
@@ -91,4 +92,6 @@ class World:
                 pg.draw.rect(screen, (255, 255, 255), self._camera.apply(sprite.hit_rect), 1)
             for sprite in self._groups[cfg.STEPS_GROUP]:
                 pg.draw.rect(screen, (255, 255, 255), self._camera.apply(sprite.hit_rect), 1)
-        self._player.hud.draw(screen)
+        # Draw the Player's HUD on top of everything else else.
+        # self._player.sprite.draw(screen, self._camera)
+        self._player.draw(screen, self._camera)

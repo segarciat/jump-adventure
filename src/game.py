@@ -3,6 +3,7 @@ import pygame as pg
 
 import src.config as cfg
 # Loads all sprite sheet images and sounds upon import.
+# todo: decide on different way to load resources rather than just importing.
 import src.services.image_loader
 import src.services.sound
 from src.state import StatefulMixin
