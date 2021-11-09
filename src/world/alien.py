@@ -33,6 +33,13 @@ class Alien(AnimatedSprite, IUpdatable, StatefulMixin):
     MAX_HEARTS = 3
 
     def __init__(self, x: float, y: float, alien_color: int, groups):
+        """
+
+        :param x: x-coordinate of the left edge of the sprite's rectangle.
+        :param y: y-coordinate of the top edge of the sprite's rectangle.
+        :param alien_color: value of class attribute that determines the sprite's image.
+        :param groups: dictionary of sprite groups containing all sprites in the game world.
+        """
         frames = [
             # Right frames.
             {'animation_number': Alien.STAND_R, 'image_names': [f'p{alien_color}_stand.png']},
@@ -64,6 +71,7 @@ class Alien(AnimatedSprite, IUpdatable, StatefulMixin):
             for frame, image in enumerate(self._images[animation]):
                 self._images[animation][frame] = pg.transform.flip(image, True, False)
 
+        # todo: fix inconsistency of x, y, arguments.. should they always represent topleft, or represent midbottom?
         self.physics = PhysicsComponent(
             sprite=self,
             x=x,
@@ -118,14 +126,6 @@ class Alien(AnimatedSprite, IUpdatable, StatefulMixin):
     @property
     def hurt_state(self) -> AlienState:
         return self._hurt_state
-
-    def change_anim(self, animation_number: int) -> None:
-        """Preserves the previous frame's midbottom position when switching animations."""
-        old_pos = self.rect.midbottom
-        super().change_anim(animation_number)
-        self.rect.height = self.image.get_height()
-        self.rect.width = self.image.get_width()
-        self.rect.midbottom = self.hit_rect.midbottom = old_pos
 
     def hurt(self, half_heart_damage: int):
         if half_heart_damage <= 0:

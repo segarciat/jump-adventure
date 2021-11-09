@@ -13,27 +13,27 @@ from src.world.items.spikes import Spikes
 from src.world.items.weight import ChainedWeight
 
 
-class Factory:
+class SpriteFactory:
     @classmethod
     def create(cls, p, player, groups):
         if p.name == "alien":
-            return Factory.create_alien(p, groups)
+            return SpriteFactory.create_alien(p, groups)
         elif p.name == "platform":
-            return Factory.create_platform(p, groups)
+            return SpriteFactory.create_platform(p, groups)
         elif p.name == "step":
-            return Factory.create_step(p, groups)
+            return SpriteFactory.create_step(p, groups)
         elif p.name == "coin":
-            return Factory.create_coin(p, groups)
+            return SpriteFactory.create_coin(p, groups)
         elif p.name == "spikes":
-            return Factory.create_spikes(p, groups)
+            return SpriteFactory.create_spikes(p, groups)
         elif p.name == "springboard":
-            return Factory.create_springboard(p, groups)
+            return SpriteFactory.create_springboard(p, groups)
         elif p.name == "weight":
-            return Factory.create_weight(p, player, groups)
+            return SpriteFactory.create_weight(p, player, groups)
         elif p.name == "fish":
             pass
         elif p.name == "slime":
-            return Factory.create_slime(p, groups)
+            return SpriteFactory.create_slime(p, groups)
 
     @classmethod
     def create_alien(cls, p, groups):

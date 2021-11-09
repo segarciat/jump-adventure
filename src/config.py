@@ -29,7 +29,6 @@ COLOR_KEY = BLACK
 
 # Sprite sheets.
 SPRITE_SHEETS = (
-    # {"img": "onlyObjects_default.png", "xml": "onlyObjects_default.xml"},  # Game Object images.
     {"img": "blueSheet.png", "xml": "blueSheet.xml"},  # UI images.
 )
 

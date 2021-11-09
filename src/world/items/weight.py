@@ -1,3 +1,5 @@
+import src.config as cfg
+
 import src.world.physics as physics
 from src.world.items.item import Item
 from src.world.base_sprite import DrawableSprite, IUpdatable
@@ -15,7 +17,7 @@ class ChainedWeight(DrawableSprite, IUpdatable, Item):
         groups['obstacles'].add(self)
 
         # Allows us to remove from group when weight hits the ground.
-        self._update_group = groups[IUpdatable.GROUP_NAME]
+        self._update_group = groups[cfg.UPDATE_GROUP]
         # todo: Utility function to convert topleft coordinate to bottom middle?
         self.rect.topleft = x, y
         # Weight object hit box.

@@ -6,7 +6,7 @@ import src.config as cfg
 import src.world.physics as physics
 from src.entities.player import Player
 from src.world.camera import Camera
-from src.world.factory import Factory
+from src.world.spritefactory import SpriteFactory
 
 
 class World:
@@ -61,16 +61,17 @@ class World:
             cfg.STEPS_GROUP: pg.sprite.Group(),
         }
         p = tm.get_object_by_name("player")
-        self._player = Player(Factory.create_alien(p, self._groups))
+        self._player = Player(SpriteFactory.create_alien(p, self._groups))
         self._camera = Camera(self._map_rect.width, self._map_rect.height, self._player.sprite)
         for p in tm.objects:
-            Factory.create(p, self.player, self._groups)
+            SpriteFactory.create(p, self.player, self._groups)
 
     def update(self, *args, **kwargs) -> None:
         """Updates the game world's sprites, camera, and resolves collisions."""
         self._groups[cfg.UPDATE_GROUP].update(*args, **kwargs, world=self)
         self._camera.update()
 
+        # todo: consider moving collision resolution to physics module.
         # Resolve collisions.
         items = pg.sprite.spritecollide(self._player.sprite, self._groups[cfg.ITEMS_GROUP], dokill=False,
                                         collided=physics.collide_hit_rect)

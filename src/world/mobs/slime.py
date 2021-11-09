@@ -8,10 +8,13 @@ from src.world.components.physics import PhysicsComponent
 
 
 class Slime(AnimatedSprite, IUpdatable):
+    # Slime frames.
     WALK_L = 0
     DEAD_L = 2
     WALK_R = 1
     DEAD_R = 3
+
+    TURN_CHANCE = 0.015
 
     def __init__(self, x, y, groups):
         frames = [
@@ -26,7 +29,6 @@ class Slime(AnimatedSprite, IUpdatable):
         for animation in (Slime.WALK_R, Slime.DEAD_R):
             for frame, image in enumerate(self._images[animation]):
                 self._images[animation][frame] = pg.transform.flip(image, True, False)
-        print(self._images)
         self.physics = PhysicsComponent(
             sprite=self,
             x=x,
@@ -38,25 +40,28 @@ class Slime(AnimatedSprite, IUpdatable):
                 {'callback': physics.step_collision, 'colliders': groups['steps']}
             ],
         )
+        self.hit_rect = self.rect.copy()
         self.hit_rect.midbottom = x, y
+
+        # Animation frame rate.
+        self._anim_fps = 4.0
 
         self.facing_left = True
         self.physics.vel.x = -100
-        self._anim_fps = 8.0  # Animation frame rate.
-        self.change_anim(Slime.WALK_L)
-
-    def update_anim(self):
-        super().update_anim()
-        self.rect.midbottom = self.physics.pos
+        self._turn()
 
     def update(self, *args, **kwargs):
-        # Have the slime turn around with a 1% chance.
-        if random.random() < 0.01:
+        self._turn()
+        self.physics.update()
+        self.update_anim()
+
+    def _turn(self):
+        """Have the slime turn around with a 1% chance."""
+        if random.random() < Slime.TURN_CHANCE:
             self.physics.vel.x *= -1
             self.facing_left = not self.facing_left
             if self.facing_left:
                 self.change_anim(Slime.WALK_L)
             else:
                 self.change_anim(Slime.WALK_R)
-        self.physics.update()
-        self.update_anim()
+
