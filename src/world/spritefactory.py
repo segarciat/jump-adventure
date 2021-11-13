@@ -65,12 +65,8 @@ class SpriteFactory:
 
     @classmethod
     def create_slime(cls, p, groups):
-        x = p.x + p.width / 2
-        y = p.y + p.height
-        return Slime(x, y, groups)
+        return Slime(p.x, p.y, groups)
 
     @classmethod
     def create_fish(cls, p, groups):
-        x = p.x + p.width / 2
-        y = p.y + p.height
-        return Fish(x, y, groups)
+        return Fish(p.x, p.y, groups)

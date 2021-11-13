@@ -14,7 +14,7 @@ class ChainedWeight(DrawableSprite, IUpdatable, Item):
         DrawableSprite.__init__(self, groups, default_image_name='weightChained.png', shared=True)
         IUpdatable.__init__(self, groups)
         Item.__init__(self, groups)
-        groups['obstacles'].add(self)
+        groups[cfg.OBSTACLE_GROUP].add(self)
 
         # Allows us to remove from group when weight hits the ground.
         self._update_group = groups[cfg.UPDATE_GROUP]
@@ -34,12 +34,12 @@ class ChainedWeight(DrawableSprite, IUpdatable, Item):
         # Weight cannot fall while chained
         self.physics = PhysicsComponent(
             sprite=self,
-            x=self.rect.centerx,
-            y=self.rect.bottom,
+            x=x,
+            y=y,
             forces=[physics.apply_gravity, physics.apply_gravity],
             collision_handlers=[
-                {'callback': physics.halt_collide_y, 'colliders': groups['obstacles']},
-                {'callback': physics.halt_collide_x, 'colliders': groups['obstacles']}
+                {'callback': physics.halt_collide_y, 'colliders': groups[cfg.OBSTACLE_GROUP]},
+                {'callback': physics.halt_collide_x, 'colliders': groups[cfg.OBSTACLE_GROUP]}
             ]
         )
         self.player = player

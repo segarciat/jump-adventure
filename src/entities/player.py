@@ -2,6 +2,8 @@ import src.input.input_manager as input_manager
 
 from src.entities.player_hud import PlayerHUD
 
+_JUMP_TURN_ACC = 200
+
 
 class Player:
     def __init__(self, sprite):
@@ -42,16 +44,14 @@ class Player:
             elif input_manager.process_active_binding("jump"):
                 self._sprite.state = self._sprite.jump_state
         elif self._sprite.state == self._sprite.jump_state:
-            pass
-
-
-# jump stuff
-"""def handle_keys(self):
-    if self._alien.facing_left and input_manager.process_active_binding("right"):
-        self._alien.facing_left = False
-        self._alien.change_anim(self._alien.JUMP_R)
-        # self._alien.physics.vel.x += abs(self._alien.physics.vel.x) / 2
-    elif not self._alien.facing_left and input_manager.process_active_binding("left"):
-        self._alien.facing_left = True
-        self._alien.change_anim(self._alien.JUMP_L)
-        # self._alien.physics.vel.x -= abs(self._alien.physics.vel.x) / 2"""
+            # todo: test this effect further.
+            right_triggered = input_manager.process_active_binding("right")
+            left_triggered = input_manager.process_active_binding("left")
+            if self._sprite.facing_left and right_triggered and not left_triggered:
+                self._sprite.physics.acc.x = _JUMP_TURN_ACC
+                self._sprite.change_anim(self._sprite.JUMP_R)
+                self._sprite.facing_left = False
+            elif not self._sprite.facing_left and left_triggered and not right_triggered:
+                self._sprite.physics.acc.x = -_JUMP_TURN_ACC
+                self._sprite.change_anim(self._sprite.JUMP_L)
+                self._sprite.facing_left = True

@@ -43,6 +43,11 @@ class SpringBoard(DrawableSprite, Item, IUpdatable):
         if player.sprite.physics.vel.y > 0:
             self.image = self._spring_down_surface
             player.sprite.physics.vel.y = -SpringBoard.JUMP_VEL
+            # todo: testing this effect.
+            # player.sprite.physics.vel.x = 0
+            # print(f'before: {player.sprite.physics.acc.x}')
+            # player.sprite.physics.acc.x = 0
+            # print(f'after:{player.sprite.physics.acc.x}')
             self._activation_timer.unpause()
             self._update_group.add(self)
         # todo: Check whether collision happened from left or right or something else?

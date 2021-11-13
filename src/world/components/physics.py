@@ -5,9 +5,12 @@ import src.config as cfg
 
 class PhysicsComponent:
     def __init__(self, sprite, x, y, forces, collision_handlers):
-        self.pos = pg.Vector2(x, y)
+        center_x, bottom_y = x + sprite.rect.w / 2, y + sprite.rect.h
+        self.pos = pg.Vector2(center_x, bottom_y)
         self.vel = pg.Vector2(0, 0)
         self.acc = pg.Vector2(0, 0)
+        sprite.hit_rect.midbottom = center_x, bottom_y
+
         self.forces = forces
         self._sprite = sprite
         self._collision_handlers = collision_handlers
@@ -15,7 +18,7 @@ class PhysicsComponent:
     def update(self, *args, **kwargs) -> None:
         for force in self.forces:
             force(self.pos, self.vel, self.acc)
-        self.acc += self.vel * cfg.MS_PER_UPDATE
+        self.vel += self.acc * cfg.MS_PER_UPDATE
         displacement = (self.vel * cfg.MS_PER_UPDATE) + (0.5 * self.acc * cfg.MS_PER_UPDATE ** 2)
 
         # Move and collide in y direction.

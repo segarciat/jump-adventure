@@ -25,12 +25,12 @@ def halt_collide_x(sprite, obstacles: pg.sprite.Group, displacement: pg.math.Vec
     obstacle = pg.sprite.spritecollideany(sprite, obstacles, collide_hit_rect)
     if obstacle and obstacle != sprite:
         # Sprite runs into platform from the left.
-        if sprite.hit_rect.right > obstacle.hit_rect.left > sprite.hit_rect.right - displacement.x:
+        if sprite.hit_rect.right > obstacle.hit_rect.left >= sprite.hit_rect.right - displacement.x:
             sprite.hit_rect.right = obstacle.hit_rect.left
             sprite.physics.acc.x = 0
             sprite.physics.vel.x = 0
         # Sprite runs into platform from the right.
-        elif sprite.hit_rect.left < obstacle.hit_rect.right < sprite.hit_rect.left - displacement.x:
+        elif sprite.hit_rect.left < obstacle.hit_rect.right <= sprite.hit_rect.left - displacement.x:
             sprite.hit_rect.left = obstacle.hit_rect.right
             sprite.physics.acc.x = 0
             sprite.physics.vel.x = 0
@@ -49,12 +49,12 @@ def halt_collide_y(sprite, obstacles: pg.sprite.Group, displacement: pg.math.Vec
     obstacle = pg.sprite.spritecollideany(sprite, obstacles, collide_hit_rect)
     if obstacle and obstacle != sprite:
         # Sprite falls on top of platform.
-        if sprite.hit_rect.bottom - displacement.y < obstacle.hit_rect.top < sprite.hit_rect.bottom:
+        if sprite.hit_rect.bottom - displacement.y <= obstacle.hit_rect.top < sprite.hit_rect.bottom:
             sprite.hit_rect.bottom = obstacle.hit_rect.top
             sprite.physics.vel.y = 0
             sprite.physics.acc.y = 0
         # Sprite hits platform from the bottom.
-        elif sprite.hit_rect.top - displacement.y > obstacle.hit_rect.bottom > sprite.hit_rect.top:
+        elif sprite.hit_rect.top - displacement.y >= obstacle.hit_rect.bottom > sprite.hit_rect.top:
             sprite.hit_rect.top = obstacle.hit_rect.bottom
             sprite.physics.vel.y = 0
             sprite.physics.acc.y = 0

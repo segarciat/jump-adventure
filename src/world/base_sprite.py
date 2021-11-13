@@ -12,7 +12,7 @@ class DrawableSprite(pg.sprite.Sprite, metaclass=abc.ABCMeta):
         pg.sprite.Sprite.__init__(self, groups[cfg.DRAW_GROUP])
         self._image = image_loader.get_image(default_image_name, shared)
         self.rect = self._image.get_rect()
-        self.hit_rect = self.rect
+        self.hit_rect = self.rect.copy()
 
     @property
     def image(self) -> pg.Surface:

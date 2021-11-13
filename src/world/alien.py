@@ -1,5 +1,6 @@
 import pygame as pg
 
+import src.config as cfg
 import src.world.physics as physics
 from src.state import StatefulMixin
 from src.world.base_sprite import IUpdatable
@@ -33,13 +34,6 @@ class Alien(AnimatedSprite, IUpdatable, StatefulMixin):
     MAX_HEARTS = 3
 
     def __init__(self, x: float, y: float, alien_color: int, groups):
-        """
-
-        :param x: x-coordinate of the left edge of the sprite's rectangle.
-        :param y: y-coordinate of the top edge of the sprite's rectangle.
-        :param alien_color: value of class attribute that determines the sprite's image.
-        :param groups: dictionary of sprite groups containing all sprites in the game world.
-        """
         frames = [
             # Right frames.
             {'animation_number': Alien.STAND_R, 'image_names': [f'p{alien_color}_stand.png']},
@@ -78,22 +72,19 @@ class Alien(AnimatedSprite, IUpdatable, StatefulMixin):
             y=y,
             forces=[physics.apply_gravity],
             collision_handlers=[
-                {'callback': physics.halt_collide_y, 'colliders': groups['obstacles']},
-                {'callback': physics.halt_collide_x, 'colliders': groups['obstacles']},
-                {'callback': physics.step_collision, 'colliders': groups['steps']}
+                {'callback': physics.halt_collide_y, 'colliders': groups[cfg.OBSTACLE_GROUP]},
+                {'callback': physics.halt_collide_x, 'colliders': groups[cfg.OBSTACLE_GROUP]},
+                {'callback': physics.step_collision, 'colliders': groups[cfg.STEPS_GROUP]}
             ],
         )
+        # Adjusted hit box for the Alien.
+        self.hit_rect.width = int(self.rect.width * 0.7)
 
         # Decides the correct image used for the Alien; can be one of Alien.P1, Alien.P2, or Alien.P3.
         self.alien_color = alien_color
 
         self.max_hearts = Alien.MAX_HEARTS
         self.hearts = self.max_hearts
-
-        # Adjusted hit box for the Alien.
-        self.hit_rect = self.rect.copy()
-        self.hit_rect.width = int(self.rect.width * 0.7)
-        self.hit_rect.midbottom = self.rect.midbottom
 
         # Alien faces right by default.
         self.facing_left = False

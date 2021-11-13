@@ -14,7 +14,8 @@ class Slime(AnimatedSprite, IUpdatable):
     WALK_R = 1
     DEAD_R = 3
 
-    TURN_CHANCE = 0.015
+    TURN_CHANCE = 0.01
+    BASE_VELOCITY = 100
 
     def __init__(self, x, y, groups):
         frames = [
@@ -40,22 +41,27 @@ class Slime(AnimatedSprite, IUpdatable):
                 {'callback': physics.step_collision, 'colliders': groups['steps']}
             ],
         )
-        self.hit_rect = self.rect.copy()
-        self.hit_rect.midbottom = x, y
 
         # Animation frame rate.
         self._anim_fps = 4.0
 
         self.facing_left = True
-        self.physics.vel.x = -100
+        self.physics.vel.x = -Slime.BASE_VELOCITY
         self._turn()
 
-    def update(self, *args, **kwargs):
+    @property
+    def direction(self) -> int:
+        """ -1 for left, 1 for right."""
+        return -1 if self.facing_left else 1
+
+    def update(self, *args, **kwargs) -> None:
+        # In case slime hit a wall, reset velocity.
+        self.physics.vel.x = Slime.BASE_VELOCITY * self.direction
         self._turn()
         self.physics.update()
         self.update_anim()
 
-    def _turn(self):
+    def _turn(self) -> None:
         """Have the slime turn around with a 1% chance."""
         if random.random() < Slime.TURN_CHANCE:
             self.physics.vel.x *= -1
@@ -64,4 +70,3 @@ class Slime(AnimatedSprite, IUpdatable):
                 self.change_anim(Slime.WALK_L)
             else:
                 self.change_anim(Slime.WALK_R)
-
