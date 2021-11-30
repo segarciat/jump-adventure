@@ -14,6 +14,8 @@ class AnimatedSprite(DrawableSprite):
     Sanjay Madhav.
     """
     def __init__(self, frame_info, groups: typing.Dict[str, pg.sprite.Group]):
+        # todo: either pass l_frames and r_frames as argument, or pack the left, right info in frame_info
+        # todo: alternatively, include a "flip" flag.. see snail.
         """
 
         :param frame_info: List of dictionaries. Each dictionary has a 'start_frame' and a 'num_frames' key, one for

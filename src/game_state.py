@@ -14,12 +14,14 @@ class GameState(IState, metaclass=abc.ABCMeta):
         """Creates a GameState object to dive the behavior of the main object of class Game."""
         self._game = game
 
-    @abc.abstractmethod
     def process_inputs(self) -> None:
         """Fetches any inputs in the queue since last frame and processes them."""
-        pass
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                self._game.quit()
+        input_manager.update_inputs()
+        self._game.ui.process_inputs()
 
-    @abc.abstractmethod
     def update(self, *args, **kwargs) -> None:
         """Updates the Game while in the current state."""
         pass
@@ -30,7 +32,6 @@ class GameState(IState, metaclass=abc.ABCMeta):
 
     def _transition(self, state: 'GameState') -> None:
         """Sets the state attribute of the object of class Game; created for use in lambda expressions."""
-        # TODO: find alternative to using this helper function.
         self._game.state = state
 
 
@@ -50,18 +51,6 @@ class GameMainMenuState(GameState):
         ]
         self._game.ui.make_menu("Main Menu", 24, cfg.WHITE, buttons)
 
-    def process_inputs(self) -> None:
-        """Allows the user to quit out of the game or click on menu options."""
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self._game.quit()
-        input_manager.update_inputs()
-        self._game.ui.process_inputs()
-
-    def update(self, *args, **kwargs) -> None:
-        """Does nothing."""
-        pass
-
     def draw(self, screen: pg.Surface) -> None:
         """Draws the game splash and the menu on top of it."""
         screen.blit(self._menu_splash, self._menu_splash.get_rect())
@@ -80,22 +69,15 @@ class GamePlayingState(GameState):
         # Clear the UI.
         self._game.ui.clear()
         Timer.clear_timers()
+        # TODO: Instead of hard-coding map file, allow user to select map from MainMenu, and play state passes that in.
         self._world = World(cfg.MAP_FILE)
         self._paused = False
 
     def process_inputs(self) -> None:
         """Processes key and mouse input queued since the last frame."""
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self._game.quit()
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_p:
-                    self._pause()
-                # For development.
-                elif event.key == pg.K_0:
-                    cfg.DEBUG = not cfg.DEBUG
-        input_manager.update_inputs()
-        self._game.ui.process_inputs()
+        super().process_inputs()
+        if input_manager.process_active_binding("pause"):
+            self._toggle_pause()
         if not self._paused:
             self._world.player.process_inputs()
 
@@ -111,14 +93,14 @@ class GamePlayingState(GameState):
             self._world.draw(screen)
         self._game.ui.draw(screen)
 
-    def _pause(self) -> None:
+    def _toggle_pause(self) -> None:
         """Toggles the pause mode of the game."""
         if self._paused:
             self._game.ui.pop_menu()
             Timer.unpause_timers()
         else:
             buttons = [
-                {'action': self._pause, 'text': 'Resume', 'size': 16, 'color': cfg.WHITE},
+                {'action': self._toggle_pause, 'text': 'Resume', 'size': 16, 'color': cfg.WHITE},
                 {'action': self.enter, 'text': 'Restart', 'size': 16, 'color': cfg.WHITE},
                 {
                     'action': lambda: self._transition(self._game.main_menu_state),
